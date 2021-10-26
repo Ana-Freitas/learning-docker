@@ -80,3 +80,26 @@ docker stop mysql-container
 docker run -d -v C:/projects/learning-docker/api/db/data:/var/lib/mysql --rm --name mysql-container mysql-image
 !Talvez o ideal, é não deixar essa pasta dentro do seu projeto
 
+NODE
+----------------------------------------------------------------------------------------------------------------------------------------------------
+PASSO 15:npm init para iniciar um repositorio node (é necessario instalar o nodejs antes)
+PASSO 16: Instalar o nodemon para manter a aplicação rodando e fazendo o reload sempre que atualizamos o app
+(npm install --save-dev nodemon)
+PASSO 17: Vamos instalar o express para fazer as rotas que vai nos retornar os produtos  e o driver mysql que vai facilitar a conexão com o banco (npm install --save express mysql)
+PASSO 18: No package.json, em scripts, adicione a seguinte linha:
+     "start": "nodemon ./src/index" 
+PASSO 19: Crie o arquivo index.js no diretorio api/src
+PASSO 20: No diretorio api/ crie o arquivo Dockerfile
+    OBS.: Escolhemos a image slim do node (node:<version>-slim) com o comando FROM
+    O comando WORKDIR ele navega até o diretorio que informamos, que é onde os arquivos javascript irão ficar
+    Quando o container estiver de pé, precisamos dar o npm start (esse comando irá rodar no diretorio informado acima)
+PASSO 21: Construir a imagem com o comando build (já fizemos isso anteriormente para o docker PASSO 3, porém agora faremos para o node)
+docker build -t node-image -f api/Dockerfile .
+PASSO 22: Agora iremos subir uma container utilizando a imagem que construimos acima:  docker run -d -v C:\projects\learning-docker\api:/home/node/app -p 9001:9001 --rm --name node-container node-image
+    OBS.: A flag -p informa que estamos expondo a porta 9001 do container para a porta 9001 do host (portHost:portContainer)
+    Lembrando que o container mysql-container deve estar rodando!
+PASSO 23: Para verificar se ocorreu tudo bem, acesse: http://localhost:9001/products, deve retornar os produtos inseridos
+PASSO 24: Ao inves de informar o ip do container, podemos utilizar o nome, mude o index.js para o nome do container (mysql-container)
+PASSO 25: Pare o container e rode novamente adicionando a flag --link-container que indica um vinculo com o container mysql-container. 
+O comando ficará dessa forma: docker run -d -v C:\projects\learning-docker\api:/home/node/app -p 9001:9001 --link mysql-container --rm --name node-container node-image
+Realize o teste novamente, deve continuar funcionando!
