@@ -103,3 +103,31 @@ PASSO 24: Ao inves de informar o ip do container, podemos utilizar o nome, mude 
 PASSO 25: Pare o container e rode novamente adicionando a flag --link-container que indica um vinculo com o container mysql-container. 
 O comando ficará dessa forma: docker run -d -v C:\projects\learning-docker\api:/home/node/app -p 9001:9001 --link mysql-container --rm --name node-container node-image
 Realize o teste novamente, deve continuar funcionando!
+
+PHP
+----------------------------------------------------------------------------------------------------------- 
+PASSO 26: Crie o arquivo index.php no diretorio folder > website. Nesse arquivo terá a estrutura html e um loop para percorrer os dados retornados pelo api node
+PASSO 27: Crie o arquivo Dockerfile para a criação do container, no diretorio api > website. Nesse arquivo informa que iremos pegar da imagem php:7.2-apache (php:<version>-apache) 
+PASSO 28: Construa a imagem docker com o comando:
+    docker build -t php-image -f website/Dockerfile .
+PASSO 29: Rodar o container com o comando: docker run -d -v C:\projects\learning-docker/website:/var/www/html -p 8888:80 --link node-container --rm --name php-container php-image
+PASSO 30: Acesse em http://localhost:8888/ para verificar se ocorreu tudo bem, deverá trazer a lista de produtos criada.
+
+PERSONALIZANDO COM BOOTSTRAP
+------------------------------------------------------------------------------------------------------------
+PASSO 31: No link https://getbootstrap.com/docs/5.1/getting-started/download/ baixe a versão compilada do BOOTSTRAP
+PASSO 32: Descompacte na paste website > vendor do projeto, e renomeie para bootstrap
+PASSO 33: Add o bootstrap ao html 
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css" />
+PASSO 34: Pode personalizar a vontade, adicione as classes disponibilizadas pelo bootstrap onde deseja personalizar e veja o resultado apenas recarregando a pagina
+PASSO 35: Para testar vamos add mais um item no banco com os comandos abaixo:
+    docker exec -it mysql-container /bin/bash
+    mysql -uroot -proot
+    USE learning_docker;
+    INSERT INTO products VALUE(0, 'Testando Insert', 15);
+
+    Recarregue a pagina e veja se o item inserido refletiu na tela!
+
+------- CREDITOS:
+    CANAL: Programador a Bordo
+    https://www.youtube.com/watch?v=Kzcz-EVKBEQ
