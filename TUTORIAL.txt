@@ -57,3 +57,26 @@ PASSO 10: No terminal DO CONTAINER, chame o mysql com o comando: mysql -uroot -p
 PASSO 11: Em seguida acesso o banco: USE <nomeBanco>; e selecione os dados da tabela desejada
     Exemplo: USE learning_docker;
              SELECT * FROM products;
+
+    Quando um container é parado ou excluido, tudo que foi feito é perdido, podemos testar isso 
+    parando o container com o comando: docker stop mysql-container 
+    e executar ele novamente (docker run -d --rm --name mysql-container mysql-image)
+    Acessar o terminal do container (PASSO 9) e o mysql (PASSO 10), e no mysql executar: show databases; 
+    Ao exibir você irá verificar que não existe mais o banco que criamos anteriormente
+
+    No entanto, existe uma forma de resolver isso, com os VOLUMES. Uma forma de compartilhar o que foi feito em um volume refletindo em outro 
+    
+PASSO 12: Pare o container com o comando  docker stop mysql-container 
+
+PASSO 13: Vamos rodar o docker com uma flag a mais: docker run -d -v $(pwd)/api/db/data:/var/lib/mysql --rm --name mysql-container mysql-image
+    OBS.: A flag -v indica volume que irá indicar que espera um caminho do volume que está no host que está compartilhada com o container
+    O caminho indicado na frente dessa flag é dividida em duas partes, sepadas por dois ponto (:), pasta host:pasta container
+    $(pwd) é um comando que retorna o diretorio atual, caso não funcione, tente %cd%  ou pegue o caminho absoluto
+    /var/lib/mysql -> pasta que fica o mysql e toda a estrutura do seu banco
+
+PASSO 14: Rode novamente o comando para criar o banco (PASSO 8), você verá que a estrutura do seu banco está no diretorio api/db/data
+!fAÇA o teste restartando o container e veja se as informaç~es continuam! Lembre-se que o comando a ser executado para rodar o container deve ser:  
+docker stop mysql-container 
+docker run -d -v C:/projects/learning-docker/api/db/data:/var/lib/mysql --rm --name mysql-container mysql-image
+!Talvez o ideal, é não deixar essa pasta dentro do seu projeto
+
