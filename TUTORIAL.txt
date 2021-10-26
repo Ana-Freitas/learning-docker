@@ -1,0 +1,59 @@
+PASSO 1: Criar a estrutura do diretorio (folder > api > db)
+
+PASSO 2: No diretório nomeApp > db crie o arquivo Dockerfile
+    Conteúdo: 
+        FROM mysql
+        ENV MYSQL_ROOT_PASSWORD root
+    OBS.: ENV permite que adicionar uma variavel de ambiente, no caso, indicamos o valor para MYSQL_ROOT_PASSWORD
+
+PASSO 3: No terminal, execute o comando: docker build -t mysql-image -f api/db/Dockerfile .
+    OBS.: Esse comando irá baixar a imagem especificada, no caso mysql. A flag -t significa 'tag' que indica que você irá dar um nome de sua escolha para a imagem, facilita identificar a imagem mais facilmente
+    A flag -f especifica o arquivo Dockerfile a partir do qual irá gerar a imagem
+    O ponto (.) no final do comando significa que o contexto para gerar a imagem irá ser da pasta atual.
+
+PASSO 4: Execute o comando: docker image ls ;para ver as imagens disponiveis para uso
+
+PASSO 5: Execute o comando: docker run -d --rm --name mysql-container mysql-image ; para criar o container com a imagem que acabamos de criar 
+ OBS: A flag -d significa dettach e indica que vamos executar em background, ou seja, ele não vai travar nosso terminal para exibição  de informações e logs que o container gera, e assim conseguimos executar outros comandos no terminal
+    A flag --rm significa que caso já exista o container, deve excluir para que um novo seja criado
+    A flag --name seguida do mysql-container significa  que estamos definindo um nome para um container
+    mysql-image é o nome da imagem que vamos usar no container
+
+PASSO 6: Execute: docker ps para conseguir ver os container que estão rodando
+
+PASSO 7: Dentro do diretorio api > db crie o arquivo script.sql. Nesse arquivo insira os comandos sql
+   
+    CREATE DATABASE IF NOT EXISTS learning_docker;
+    USE learning_docker;
+
+    CREATE TABLE IF NOT EXISTS products (
+        id INT(11) AUTO_INCREMENT,
+        name VARCHAR(255),
+        price DECIMAL(10,2),
+        PRIMARY KEY (id)
+    );
+
+    INSERT INTO products VALUE(0, 'Curso Front-end especialista', 2500);
+    INSERT INTO products VALUE(0, 'Curso JS FullStack', 900);
+
+PASSO 8: No terminal execute o comando: docker exec -i mysql-container mysql -uroot -proot < api/db/script.sql
+    OBS.: exec significa que vamos executar um comando dentro de um container que está rodando
+    A flag -i significa que estamos executando um comando no modo interativo, nesse caso, estamos rodando um comando para que o Mysql execute o script, dessa forma, usamos -i para que o Mysql consiga concluir sem que o processo seja finalizado
+    mysql-container é o nome do container
+    mysql chama o mysql apra execução do script
+    -uroot informa qual usuario com a flag -u (user) e na frente root (que é o usuario que estou utilizandp)
+    -proot informa qual a senha com a flag -p (password) e na frente root (que é a minha senha)
+    logo após informamos o diretorio para que o mysql pegue os comandos e o execute
+
+PASSO 9: Agora, precisamos verificar se os comandos foi executados corretamente, para isso vamos executar o comando: docker exec -it mysql-container /bin/bash
+    OBS.: A flag -t significa que vamos utilizar o tty, que resumidamente significa terminal
+        mysql-container é o container em que queremos executar o comando
+        /bin/bash significa que vamos utilizar a linguagem bash, que é uma linguagem de terminal
+
+Esse comando irá abrir o terminal do container
+
+PASSO 10: No terminal DO CONTAINER, chame o mysql com o comando: mysql -uroot -proot
+
+PASSO 11: Em seguida acesso o banco: USE <nomeBanco>; e selecione os dados da tabela desejada
+    Exemplo: USE learning_docker;
+             SELECT * FROM products;
